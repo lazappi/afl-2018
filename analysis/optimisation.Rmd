@@ -9,6 +9,8 @@ output:
     toc: yes
     toc_float: yes
     df_print: paged
+editor_options: 
+  chunk_output_type: console
 ---
 
 Code version: `r system("git log -1 --format=oneline | cut -d' ' -f1", intern = TRUE)`
@@ -30,7 +32,9 @@ knitr::opts_chunk$set(autodep        = TRUE,
 ```
 
 ```{r libaries, cache = FALSE}
-
+library("aflelo")
+library("here")
+library("tidyverse")
 ```
 
 ```{r source, cache = FALSE}
@@ -49,6 +53,140 @@ times, once aiming for the minimum margin error, once aiming for the greatest
 win percentage and once with a 50/50 balance between the two. Let's have a look
 at the different parameters that have been selected and compare their
 performance to the default parameters, based on those used by The Arc.
+
+Parameters
+==========
+
+Let's read in the results of the optimisaion and have a look at the best
+performing sets of parameters.
+
+```{r load-opt}
+opt_mar <- read_rds(here("data/opt_margin.Rds")) %>%
+    bind_rows() %>%
+    mutate(Generation = rep(1:100, each = 100)) %>%
+    arrange(-Fitness)
+
+opt_bal <- read_rds(here("data/opt_balanced.Rds")) %>%
+    bind_rows() %>%
+    mutate(Generation = rep(1:100, each = 100)) %>%
+    arrange(-Fitness)
+
+opt_win <- read_rds(here("data/opt_prediction.Rds")) %>%
+    bind_rows() %>%
+    mutate(Generation = rep(1:100, each = 100)) %>%
+    arrange(-Fitness)
+
+opt_summ <- bind_rows(unlist(aflelo_params()),
+                      opt_mar[1, ], opt_bal[1, ], opt_win[1, ]) %>%
+    data.frame() %>%
+    mutate(Version = c("Default", "Margin", "Balanced", "Prediction")) %>%
+    select(Version, new_team_rating, new_season_adjustment, hga_alpha, hga_beta,
+           pred_p, adjust_k_early, adjust_k_normal, adjust_k_finals)
+
+opt_summ
+```
+
+There are some significant differences here compared to the defaults, although
+interestingly the Margin and Balanced parameters have a lot of similarities to
+each other. To decide which to use for the model we need to look at how they
+have performed.
+
+Performance
+===========
+
+The parameters were optimised using games from the 1997 to 2016 seasons with
+the 2000 onwards used to calculate fitness. This means we can look at the
+performance of the parameter sets on this set of games but also the 2017 season
+which was not used for the optimisation in any way.
+
+```{r setup-pop}
+pop <- list(Default = aflelo_params(),
+            Margin = aflelo_params(
+                new_team_rating       = opt_summ[2, ]$new_team_rating,
+                new_season_adjustment = opt_summ[2, ]$new_season_adjustment,
+                hga_alpha             = opt_summ[2, ]$hga_alpha,
+                hga_beta              = opt_summ[2, ]$hga_beta,
+                pred_p                = opt_summ[2, ]$pred_p,
+                adjust_k_early        = opt_summ[2, ]$adjust_k_early,
+                adjust_k_normal       = opt_summ[2, ]$adjust_k_normal,
+                adjust_k_finals       = opt_summ[2, ]$adjust_k_finals 
+            ),
+            Balanced = aflelo_params(
+                new_team_rating       = opt_summ[3, ]$new_team_rating,
+                new_season_adjustment = opt_summ[3, ]$new_season_adjustment,
+                hga_alpha             = opt_summ[3, ]$hga_alpha,
+                hga_beta              = opt_summ[3, ]$hga_beta,
+                pred_p                = opt_summ[3, ]$pred_p,
+                adjust_k_early        = opt_summ[3, ]$adjust_k_early,
+                adjust_k_normal       = opt_summ[3, ]$adjust_k_normal,
+                adjust_k_finals       = opt_summ[3, ]$adjust_k_finals 
+            ),
+            Prediction = aflelo_params(
+                new_team_rating       = opt_summ[4, ]$new_team_rating,
+                new_season_adjustment = opt_summ[4, ]$new_season_adjustment,
+                hga_alpha             = opt_summ[4, ]$hga_alpha,
+                hga_beta              = opt_summ[4, ]$hga_beta,
+                pred_p                = opt_summ[4, ]$pred_p,
+                adjust_k_early        = opt_summ[4, ]$adjust_k_early,
+                adjust_k_normal       = opt_summ[4, ]$adjust_k_normal,
+                adjust_k_finals       = opt_summ[4, ]$adjust_k_finals 
+            ))
+```
+
+```{r eval-2016, cache = TRUE}
+data("matches")
+matches2016 <- filter(matches, Season <= 2016)
+
+eval_2016 <- evaluate_population(pop, matches2016, n_cores = 5)
+```
+
+```{r eval-2017, cache = TRUE}
+eval_2017 <- evaluate_population(pop, matches, start_eval = 2017,
+                                 end_eval = 2017, n_cores = 5)
+```
+
+```{r eval-summ}
+opt_summ <- opt_summ %>%
+    mutate(Margin2016 = eval_2016$MarginMAE,
+           Predict2016 = eval_2016$PctCorrect) %>%
+    mutate(Margin2017 = eval_2017$MarginMAE,
+           Predict2017 = eval_2017$PctCorrect)
+
+opt_summ
+```
+
+Based on the 2017 results I'm going to use the Margin model. Despite being
+optimised for margin accuracy it also performs best on 2017 prediction. This
+might suggest that the optimisation procedure is not ideal, but that is a
+problem for another day... Encouragingly all three of my models outperform
+the defaults, which suggests that the results will be some where in the range
+of the The Arc, and I am more than happy with that.
+
+To finish up let's train a model that we can use to make predictions about the
+2018 season!
+
+Model
+=====
+
+```{r train-model, cache = TRUE}
+params <- pop$Margin
+model <- aflelo_model(params)
+model <- train_model(model, matches)
+```
+
+So at the end of the 2017 season we have the following ratings:
+
+```{r ratings}
+model$ratings %>% arrange(desc(Rating))
+```
+
+Interestingly Sydney comes up top and GWS is probably a bit lower down than you
+would expect. Here is the laddder at the end of the home and away games for
+comparison:
+
+```{r ladder}
+model$ladder %>% arrange(desc(Points))
+```
 
 Session info
 ============
