@@ -1,0 +1,124 @@
+---
+title: "Round 5"
+author: "Luke Zappia"
+date: '`r Sys.Date()`'
+output:
+  html_document:
+    number_sections: yes
+    theme: yeti
+    toc: yes
+    toc_float: yes
+    df_print: paged
+---
+
+Code version: `r system("git log -1 --format=oneline | cut -d' ' -f1", intern = TRUE)`
+
+```{r knitr, include = FALSE}
+DOCNAME = "round5"
+knitr::opts_chunk$set(autodep        = TRUE,
+                      cache          = TRUE,
+                      cache.path     = paste0("cache/", DOCNAME, "/"),
+                      cache.comments = TRUE,
+                      echo           = FALSE,
+                      error          = FALSE,
+                      fig.align      = "center",
+                      fig.path       = paste0("figures/", DOCNAME, "/"),
+                      fig.width      = 10,
+                      fig.height     = 8,
+                      message        = FALSE,
+                      warning        = FALSE)
+```
+
+```{r libaries, cache = FALSE}
+library("aflelo")
+library("here")
+library("tidyverse")
+```
+
+```{r source, cache = FALSE}
+
+```
+
+Introduction
+============
+
+This document shows predictions for Round 5. 
+
+```{r load}
+round <- "R5"
+
+source(here("R/get_matches.R"))
+
+model <- read_rds(here("output/model_preseason.Rds"))
+matches <- read_tsv(here("data/matches_2018.tsv"),
+                    col_types = cols(
+                        .default = col_character(),
+                        Date = col_date(format = ""),
+                        Season = col_integer(),
+                        HomeGoals = col_integer(),
+                        HomeBehinds = col_integer(),
+                        HomeTotal = col_integer(),
+                        AwayGoals = col_integer(),
+                        AwayBehinds = col_integer(),
+                        AwayTotal = col_integer()
+                    ))
+fixture <- read_tsv(here("data/fixture_2018.tsv"),
+                    col_types = cols(
+                        .default = col_character(),
+                        Date = col_date(format = ""),
+                        Season = col_integer()
+                    ))
+
+fixture_round <- fixture %>%
+    filter(Round == round)
+
+round_num <- as.numeric(str_remove(round, "R"))
+upcoming_rounds <- paste0("R", seq(round_num, 23))
+
+fixture_upcoming <- fixture %>%
+    filter(Round %in% upcoming_rounds)
+
+matches <- matches %>%
+    filter(!(Round %in% upcoming_rounds))
+```
+
+```{r train}
+model <- train_model(model, matches)
+```
+
+```{r predict}
+predictions <- pmap(fixture_round, function(HomeTeam, AwayTeam, Ground, ...) {
+    pred <- predict_match(model, HomeTeam, AwayTeam, Ground)
+    data_frame(Home = HomeTeam, Away = AwayTeam, Ground = Ground,
+               Result = pred[1], Margin = pred[2])
+})
+
+predictions <- bind_rows(predictions)
+predictions
+```
+
+```{r simulate}
+sim <- simulate_matches(model, fixture_upcoming, n = 10000,
+                        n_cores = 5, seed = 1)
+```
+
+```{r save, cache = FALSE}
+write_rds(here("output", paste0("simulation_", round)))
+```
+
+Session info
+============
+
+```{r session-info, cache = FALSE}
+devtools::session_info()
+```
+
+```{r cleanup-docs, cache = FALSE}
+doc.files <- c(list.files(pattern = "pdf"),
+               list.files(pattern = "html"),
+               list.files(pattern = "docx"))
+
+for (file in doc.files) {
+    file.rename(file, file.path("../docs", file))
+}
+```

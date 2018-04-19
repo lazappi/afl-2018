@@ -11,7 +11,7 @@ Date	Season	Round	HomeTeam	AwayTeam	Ground
 2018-03-29	2018	R2	Adelaide	Richmond	Adelaide Oval
 2018-03-30	2018	R2	North Melbourne	St Kilda	Docklands
 2018-03-31	2018	R2	Carlton	Gold Coast	Docklands
-2018-03-31	2018	R2	Collingwood	GWS Giants	M.C.G.
+2018-03-31	2018	R2	Collingwood	GW Sydney	M.C.G.
 2018-03-31	2018	R2	Brisbane	Melbourne	Gabba
 2018-03-31	2018	R2	Fremantle	Essendon	Perth Stadium
 2018-04-01	2018	R2	Western Bulldogs	West Coast	Docklands
@@ -21,7 +21,7 @@ Date	Season	Round	HomeTeam	AwayTeam	Ground
 2018-04-07	2018	R3	Port Adelaide	Brisbane	Adelaide Oval
 2018-04-07	2018	R3	Melbourne	North Melbourne	M.C.G.
 2018-04-07	2018	R3	Gold Coast	Fremantle	Perth Stadium
-2018-04-07	2018	R3	Sydney	GWS Giants	S.C.G.
+2018-04-07	2018	R3	Sydney	GW Sydney	S.C.G.
 2018-04-07	2018	R3	St Kilda	Adelaide	Docklands
 2018-04-08	2018	R3	Richmond	Hawthorn	M.C.G.
 2018-04-08	2018	R3	Western Bulldogs	Essendon	Docklands
@@ -36,7 +36,7 @@ Date	Season	Round	HomeTeam	AwayTeam	Ground
 2018-04-15	2018	R4	Hawthorn	Melbourne	M.C.G.
 2018-04-15	2018	R4	Geelong	St Kilda	Kardinia Park
 2018-04-20	2018	R5	Sydney	Adelaide	S.C.G.
-2018-04-21	2018	R5	St Kilda	GWS Giants	Docklands
+2018-04-21	2018	R5	St Kilda	GW Sydney	Docklands
 2018-04-21	2018	R5	Carlton	West Coast	M.C.G.
 2018-04-21	2018	R5	Port Adelaide	Geelong	Adelaide Oval
 2018-04-21	2018	R5	Fremantle	Western Bulldogs	Perth Stadium
@@ -53,7 +53,7 @@ Date	Season	Round	HomeTeam	AwayTeam	Ground
 2018-04-29	2018	R6	Essendon	Melbourne	Docklands
 2018-04-29	2018	R6	Collingwood	Richmond	M.C.G.
 2018-04-29	2018	R6	Fremantle	West Coast	Perth Stadium
-2018-05-04	2018	R7	Geelong	GWS Giants	Kardinia Park
+2018-05-04	2018	R7	Geelong	GW Sydney	Kardinia Park
 2018-05-05	2018	R7	Western Bulldogs	Gold Coast	Eureka Stadium
 2018-05-05	2018	R7	Essendon	Hawthorn	M.C.G.
 2018-05-05	2018	R7	West Coast	Port Adelaide	Perth Stadium
@@ -72,7 +72,7 @@ Date	Season	Round	HomeTeam	AwayTeam	Ground
 2018-05-13	2018	R8	North Melbourne	Richmond	Docklands
 2018-05-13	2018	R8	Collingwood	Geelong	M.C.G.
 2018-05-18	2018	R9	Adelaide	Western Bulldogs	Adelaide Oval
-2018-05-19	2018	R9	North Melbourne	GWS Giants	Bellerive Oval
+2018-05-19	2018	R9	North Melbourne	GW Sydney	Bellerive Oval
 2018-05-19	2018	R9	Gold Coast	Port Adelaide	Jiangwan Stadium
 2018-05-19	2018	R9	Essendon	Geelong	M.C.G.
 2018-05-19	2018	R9	Sydney	Fremantle	S.C.G.
@@ -86,7 +86,7 @@ Date	Season	Round	HomeTeam	AwayTeam	Ground
 2018-05-26	2018	R10	Geelong	Carlton	Kardinia Park
 2018-05-26	2018	R10	GW Sydney	Essendon	Sydney Showground
 2018-05-27	2018	R10	Hawthorn	West Coast	Docklands
-2018-05-27	2018	R10	Melbourne	Adelaide	TIO Traeger Park
+2018-05-27	2018	R10	Melbourne	Adelaide	Traeger Park
 2018-05-27	2018	R10	Fremantle	North Melbourne	Perth Stadium
 2018-06-01	2018	R11	Sydney	Carlton	S.C.G.
 2018-06-02	2018	R11	Western Bulldogs	Melbourne	Docklands
@@ -96,7 +96,7 @@ Date	Season	Round	HomeTeam	AwayTeam	Ground
 2018-06-02	2018	R11	West Coast	St Kilda	Perth Stadium
 2018-06-03	2018	R11	North Melbourne	Brisbane	Docklands
 2018-06-03	2018	R11	Collingwood	Fremantle	M.C.G.
-2018-06-03	2018	R11	Adelaide	GWS Giants	Adelaide Oval
+2018-06-03	2018	R11	Adelaide	GW Sydney	Adelaide Oval
 2018-06-08	2018	R12	Port Adelaide	Richmond	Adelaide Oval
 2018-06-09	2018	R12	Geelong	North Melbourne	Kardinia Park
 2018-06-09	2018	R12	GW Sydney	Gold Coast	Sydney Showground
@@ -113,7 +113,7 @@ Date	Season	Round	HomeTeam	AwayTeam	Ground
 2018-06-21	2018	R14	West Coast	Essendon	Perth Stadium
 2018-06-22	2018	R14	Port Adelaide	Melbourne	Adelaide Oval
 2018-06-23	2018	R14	Hawthorn	Gold Coast	York Park
-2018-06-23	2018	R14	Brisbane	GWS Giants	Gabba
+2018-06-23	2018	R14	Brisbane	GW Sydney	Gabba
 2018-06-23	2018	R14	Western Bulldogs	North Melbourne	Docklands
 2018-06-24	2018	R14	Collingwood	Carlton	M.C.G.
 2018-06-28	2018	R15	Richmond	Sydney	Docklands
@@ -133,7 +133,7 @@ Date	Season	Round	HomeTeam	AwayTeam	Ground
 2018-07-07	2018	R16	Melbourne	Fremantle	Marrara Oval
 2018-07-08	2018	R16	North Melbourne	Gold Coast	Docklands
 2018-07-08	2018	R16	Essendon	Collingwood	M.C.G.
-2018-07-08	2018	R16	West Coast	GWS Giants	Perth Stadium
+2018-07-08	2018	R16	West Coast	GW Sydney	Perth Stadium
 2018-07-12	2018	R17	Adelaide	Geelong	Adelaide Oval
 2018-07-13	2018	R17	St Kilda	Carlton	Docklands
 2018-07-14	2018	R17	Hawthorn	Brisbane	York Park
@@ -151,7 +151,7 @@ Date	Season	Round	HomeTeam	AwayTeam	Ground
 2018-07-21	2018	R18	Geelong	Melbourne	Kardinia Park
 2018-07-22	2018	R18	Carlton	Hawthorn	Docklands
 2018-07-22	2018	R18	West Coast	Western Bulldogs	Perth Stadium
-2018-07-22	2018	R18	Port Adelaide	GWS Giants	Adelaide Oval
+2018-07-22	2018	R18	Port Adelaide	GW Sydney	Adelaide Oval
 2018-07-27	2018	R19	Essendon	Sydney	Docklands
 2018-07-28	2018	R19	Richmond	Collingwood	M.C.G.
 2018-07-28	2018	R19	Geelong	Brisbane	Kardinia Park
@@ -167,7 +167,7 @@ Date	Season	Round	HomeTeam	AwayTeam	Ground
 2018-08-04	2018	R20	Adelaide	Port Adelaide	Adelaide Oval
 2018-08-04	2018	R20	St Kilda	Western Bulldogs	Docklands
 2018-08-04	2018	R20	Sydney	Collingwood	S.C.G.
-2018-08-05	2018	R20	Carlton	GWS Giants	Docklands
+2018-08-05	2018	R20	Carlton	GW Sydney	Docklands
 2018-08-05	2018	R20	Melbourne	Gold Coast	M.C.G.
 2018-08-05	2018	R20	West Coast	Fremantle	Perth Stadium
 2018-08-10	2018	R21	Essendon	St Kilda	Docklands
@@ -195,5 +195,5 @@ Date	Season	Round	HomeTeam	AwayTeam	Ground
 2018-08-24	2018	R23	Sydney	Hawthorn	S.C.G.
 2018-08-24	2018	R23	Brisbane	West Coast	Gabba
 2018-08-24	2018	R23	St Kilda	North Melbourne	Docklands
-2018-08-24	2018	R23	Melbourne	GWS Giants	M.C.G.
+2018-08-24	2018	R23	Melbourne	GW Sydney	M.C.G.
 2018-08-24	2018	R23	Fremantle	Collingwood	Perth Stadium

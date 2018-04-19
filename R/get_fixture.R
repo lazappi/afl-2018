@@ -20,7 +20,7 @@ fixture <- fixture_raw %>%
         TRUE                     ~ HomeTeam
     )) %>%
     mutate(AwayTeam = case_when(
-        HomeTeam == "GWS Giants" ~ "GW Sydney",
+        AwayTeam == "GWS Giants" ~ "GW Sydney",
         TRUE                     ~ AwayTeam
     )) %>%
     mutate(Ground = case_when(
@@ -35,6 +35,7 @@ fixture <- fixture_raw %>%
         Ground == "SCG"                            ~ "S.C.G.",
         Ground == "Spotless Stadium"               ~ "Sydney Showground",
         Ground == "TIO Stadium"                    ~ "Marrara Oval",
+        Ground == "TIO Traeger Park"               ~ "Traeger Park",
         Ground == "University of Tasmania Stadium" ~ "York Park",
         Ground == "UNSW Canberra Oval"             ~ "Manuka Oval",
         TRUE                                       ~ Ground

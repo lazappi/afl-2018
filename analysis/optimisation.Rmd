@@ -188,6 +188,10 @@ comparison:
 model$ladder %>% arrange(desc(Points))
 ```
 
+```{r save-model}
+write_rds(model, here("output/model_preseason.Rds"))
+```
+
 Session info
 ============
 
