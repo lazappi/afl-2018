@@ -1,0 +1,68 @@
+---
+title: "Optimisation"
+author: "Luke Zappia"
+date: '`r Sys.Date()`'
+output:
+  html_document:
+    number_sections: yes
+    theme: yeti
+    toc: yes
+    toc_float: yes
+    df_print: paged
+---
+
+Code version: `r system("git log -1 --format=oneline | cut -d' ' -f1", intern = TRUE)`
+
+```{r knitr, include = FALSE}
+DOCNAME = "optimisation"
+knitr::opts_chunk$set(autodep        = TRUE,
+                      cache          = FALSE,
+                      cache.path     = paste0("cache/", DOCNAME, "/"),
+                      cache.comments = TRUE,
+                      echo           = FALSE,
+                      error          = FALSE,
+                      fig.align      = "center",
+                      fig.path       = paste0("figures/", DOCNAME, "/"),
+                      fig.width      = 10,
+                      fig.height     = 8,
+                      message        = FALSE,
+                      warning        = FALSE)
+```
+
+```{r libaries, cache = FALSE}
+
+```
+
+```{r source, cache = FALSE}
+
+```
+
+Introduction
+============
+
+The `aflelo` package contains functions for optimising parameters of the Elo
+model using a genetic algorithm. In this document we are going to look at the
+results of running this optimisation. There two thing we can try to optimise
+for: the error in predicting the margin of games or the percentage of games
+where the winner has been correctly predicted. I have run the optimisation three
+times, once aiming for the minimum margin error, once aiming for the greatest
+win percentage and once with a 50/50 balance between the two. Let's have a look
+at the different parameters that have been selected and compare their
+performance to the default parameters, based on those used by The Arc.
+
+Session info
+============
+
+```{r session-info, cache = FALSE}
+devtools::session_info()
+```
+
+```{r cleanup-docs, cache = FALSE}
+doc.files <- c(list.files(pattern = "pdf"),
+               list.files(pattern = "html"),
+               list.files(pattern = "docx"))
+
+for (file in doc.files) {
+    file.rename(file, file.path("../docs", file))
+}
+```

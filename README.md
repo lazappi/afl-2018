@@ -16,11 +16,17 @@ Started on 2018-04-19.
 
 Input data files include:
 
+* **opt_margin.Rds** - Results of optimising parameters for margin
+* **opt_balanced.Rds** - Results of optimising parameters for balance of margin
+  and prediction
+* **opt_prediction.Rds** - Results of optimising parameters for win prediction
+
 ## Analysis
 
 Current analysis files include:
 
 * **template.Rmd** - Analysis template
+* **optimisation.Rmd** - Exploration of parameter optimisation
 
 ## Code
 
