@@ -32,6 +32,8 @@ Current analysis files include:
 
 Current code files include:
 
+* **get_fixture.R** - Script for downloading and tidying the 2018 fixture
+
 ## Output
 
 Output files (not in repository but created by analysis files):
