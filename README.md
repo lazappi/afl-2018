@@ -33,6 +33,7 @@ Current analysis files include:
 Current code files include:
 
 * **get_fixture.R** - Script for downloading and tidying the 2018 fixture
+* **get_matches.R** - Script for downloading and tidying played 2018 matches
 
 ## Output
 
