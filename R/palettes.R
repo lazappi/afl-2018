@@ -1,0 +1,98 @@
+palettes <- list(
+    primary = c("Adelaide"         = "#1b275d",
+                "Brisbane"         = "#81003a",
+                "Carlton"          = "#192d58",
+                "Collingwood"      = "#282425",
+                "Essendon"         = "#282425",
+                "Fremantle"        = "#4c006b",
+                "Geelong"          = "#ffffff",
+                "Gold Coast"       = "#e73426",
+                "GW Sydney"        = "#f67d21",
+                "Hawthorn"         = "#f7bd25",
+                "Melbourne"        = "#1b285e",
+                "North Melbourne"  = "#ffffff",
+                "Port Adelaide"    = "#40a9ac",
+                "Richmond"         = "#282425",
+                "St Kilda"         = "#e11f3b",
+                "Sydney"           = "#ffffff",
+                "West Coast"       = "#f7c925",
+                "Western Bulldogs" = "#3153ab"),
+
+    secondary = c("Adelaide"         = "#f7d826",
+                  "Brisbane"         = "#2f4ba4",
+                  "Carlton"          = "#192d58",
+                  "Collingwood"      = "#282425",
+                  "Essendon"         = "#e01f3a",
+                  "Fremantle"        = "#4c006b",
+                  "Geelong"          = "#1b285e",
+                  "Gold Coast"       = "#f7e74a",
+                  "GW Sydney"        = "#363d44",
+                  "Hawthorn"         = "#562c0c",
+                  "Melbourne"        = "#e11f3b",
+                  "North Melbourne"  = "#2f4ca4",
+                  "Port Adelaide"    = "#282425",
+                  "Richmond"         = "#f7d726",
+                  "St Kilda"         = "#282425",
+                  "Sydney"           = "#e11f3b",
+                  "West Coast"       = "#1b285e",
+                  "Western Bulldogs" = "#e01f3a"),
+
+    text = c("Adelaide"         = "#e0203a",
+             "Brisbane"         = "#e6c45c",
+             "Carlton"          = "#ffffff",
+             "Collingwood"      = "#ffffff",
+             "Essendon"         = "#e01f3a",
+             "Fremantle"        = "#ffffff",
+             "Geelong"          = "#1b285e",
+             "Gold Coast"       = "#f7e74a",
+             "GW Sydney"        = "#ffffff",
+             "Hawthorn"         = "#562c0c",
+             "Melbourne"        = "#e11f3b",
+             "North Melbourne"  = "#2f4ca4",
+             "Port Adelaide"    = "#282425",
+             "Richmond"         = "#f7d726",
+             "St Kilda"         = "#ffffff",
+             "Sydney"           = "#e11f3b",
+             "West Coast"       = "#1b285e",
+             "Western Bulldogs" = "#ffffff"),
+
+    on_white = c("Adelaide"         = "#1b275d",
+                 "Brisbane"         = "#81003a",
+                 "Carlton"          = "#192d58",
+                 "Collingwood"      = "#282425",
+                 "Essendon"         = "#e01f3a",
+                 "Fremantle"        = "#4c006b",
+                 "Geelong"          = "#1b285e",
+                 "Gold Coast"       = "#e73426",
+                 "GW Sydney"        = "#f67d21",
+                 "Hawthorn"         = "#562c0c",
+                 "Melbourne"        = "#1b285e",
+                 "North Melbourne"  = "#2f4ca4",
+                 "Port Adelaide"    = "#40a9ac",
+                 "Richmond"         = "#f7d726",
+                 "St Kilda"         = "#e11f3b",
+                 "Sydney"           = "#e11f3b",
+                 "West Coast"       = "#1b285e",
+                 "Western Bulldogs" = "#3153ab")
+)
+
+plot_palettes <- function(palettes) {
+    palette_data <- data.frame(Team = names(palettes$primary),
+                               Primary = palettes$primary,
+                               Secondary = palettes$secondary,
+                               Text = palettes$text)
+
+    ggplot(palette_data, aes(x = Team, y = 100)) +
+        geom_col(aes(fill = Team, colour = Team), size = 2, width = 0.8,
+                 position = position_dodge(width = 0.9)) +
+        scale_fill_manual(values = primary) +
+        scale_colour_manual(values = secondary) +
+        geom_text(aes(label = Team, y = 50),
+                  angle = 90, vjust = 0.5, colour = palette_data$Text) +
+        theme_minimal() +
+        theme(legend.position = "none",
+              axis.title = element_blank(),
+              axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5,
+                                         size = 20, colour = on_white),
+              axis.text.y = element_blank())
+}

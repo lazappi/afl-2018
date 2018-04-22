@@ -9,6 +9,8 @@ output:
     toc: yes
     toc_float: yes
     df_print: paged
+editor_options: 
+  chunk_output_type: console
 ---
 
 Code version: `r system("git log -1 --format=oneline | cut -d' ' -f1", intern = TRUE)`
@@ -32,21 +34,29 @@ knitr::opts_chunk$set(autodep        = TRUE,
 ```{r libaries, cache = FALSE}
 library("aflelo")
 library("here")
+library("formattable")
+library("viridis")
 library("tidyverse")
 ```
 
 ```{r source, cache = FALSE}
+source(here("R/palettes.R"))
+source(here("R/plotting.R"))
+source(here("R/summarise.R"))
+source(here("R/tables.R"))
+```
 
+```{r setup}
+round <- "R5"
+dir.create(here("output", round), showWarnings = FALSE)
 ```
 
 Introduction
 ============
 
-This document shows predictions for Round 5. 
+This document shows predictions and simulations for `r round`. 
 
 ```{r load}
-round <- "R5"
-
 source(here("R/get_matches.R"))
 
 model <- read_rds(here("output/model_preseason.Rds"))
@@ -79,12 +89,31 @@ fixture_upcoming <- fixture %>%
     filter(Round %in% upcoming_rounds)
 
 matches <- matches %>%
-    filter(!(Round %in% upcoming_rounds))
+    filter(!(Round %in% c(upcoming_rounds, round)))
 ```
 
 ```{r train}
 model <- train_model(model, matches)
 ```
+
+```{r simulate, results = "hide"}
+message("Starting simulations at: ", Sys.time())
+sim <- simulate_matches(model, fixture_upcoming, n = 20000,
+                        n_cores = 5, seed = 1)
+message("Finished at: ", Sys.time())
+sim_summ <- summarise_sim(sim)
+```
+
+Summary
+=======
+
+```{r summary-table}
+summ_table <- make_summ_table(sim_summ, model)
+summ_table
+```
+
+Predictions
+===========
 
 ```{r predict}
 predictions <- pmap(fixture_round, function(HomeTeam, AwayTeam, Ground, ...) {
@@ -94,16 +123,46 @@ predictions <- pmap(fixture_round, function(HomeTeam, AwayTeam, Ground, ...) {
 })
 
 predictions <- bind_rows(predictions)
-predictions
 ```
 
-```{r simulate}
-sim <- simulate_matches(model, fixture_upcoming, n = 10000,
-                        n_cores = 5, seed = 1)
+```{r plot-predictions}
+pred_plot <- plot_predictions(predictions, round, palettes)
+pred_plot
+```
+
+Projections
+===========
+
+```{r plot-ladder}
+ladder_plot <- plot_ladder(sim_summ, round, palettes)
+ladder_plot
+```
+
+```{r plot-points}
+points_plot <- plot_points(sim_summ, round, palettes)
+points_plot
+```
+
+History
+=======
+
+```{r plot-history}
+history_plot <- plot_history(model, round, palettes)
+history_plot
 ```
 
 ```{r save, cache = FALSE}
-write_rds(here("output", paste0("simulation_", round)))
+write_tsv(predictions, here("output", round, "predictions.tsv"))
+write_rds(sim, here("output", round, "simulation.Rds"))
+write_rds(summ_table, here("output", round, "summary_table.Rds"))
+ggsave(here("output", round, "predictions.png"), pred_plot,
+       width = 10, height = 5)
+ggsave(here("output", round, "ladder.png"), ladder_plot,
+       width = 10, height = 10)
+ggsave(here("output", round, "points.png"), points_plot,
+       width = 10, height = 10)
+ggsave(here("output", round, "history.png"), history_plot,
+       width = 10, height = 12)
 ```
 
 Session info

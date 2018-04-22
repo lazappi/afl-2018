@@ -189,6 +189,7 @@ model$ladder %>% arrange(desc(Points))
 ```
 
 ```{r save-model}
+write_tsv(opt_summ, here("output/optimisation_summary.tsv"))
 write_rds(model, here("output/model_preseason.Rds"))
 ```
 
