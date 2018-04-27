@@ -47,6 +47,73 @@ plot_predictions <- function(predictions, round, palettes) {
 }
 
 
+plot_results <- function(model, palettes) {
+
+    round <- model$round
+
+    season <- model$match_history %>%
+        filter(Season == 2018)
+
+    correct <- sum(sign(season$Margin) == sign(season$Predicted))
+    accuracy <-  correct / nrow(season) * 100
+
+    mae <- mean(abs(season$Margin - season$Predicted))
+
+    plot_data <- season %>%
+        filter(Round == round) %>%
+        mutate(HomeTeam = as.character(HomeTeam),
+               AwayTeam = as.character(AwayTeam)) %>%
+        mutate(Positive = Margin >= Predicted) %>%
+        mutate(PredWinner = if_else(Predicted > 0, HomeTeam, AwayTeam)) %>%
+        mutate(RealWinner = if_else(Margin > 0, HomeTeam, AwayTeam)) %>%
+        mutate(Offset = if_else(Positive, 2, -2)) %>%
+        mutate(HomeLabel = HomeTeam,
+               AwayLabel = AwayTeam) %>%
+        mutate(Game = n():1)
+
+    text_pred <- palettes$on_white[plot_data$PredWinner]
+    text_real <- palettes$on_white[plot_data$RealWinner]
+    labels <- palettes$on_white[rev(plot_data$HomeTeam)]
+    labels_right <- palettes$on_white[rev(plot_data$AwayTeam)]
+
+    ggplot(plot_data,
+           aes(x = Game)) +
+        geom_segment(aes(y = -Predicted, yend = -Margin, xend = Game),
+                     arrow = arrow(length = unit(0.03, "npc")),
+                     size = 1) +
+        geom_hline(yintercept = 0, size = 2) +
+        geom_text(aes(y = -(Predicted - Offset),  label = abs(round(Predicted))),
+                   colour = text_pred, size = 6) +
+        geom_text(aes(y = -(Margin + Offset),  label = abs(round(Margin))),
+                  colour = text_real, size = 6) +
+        scale_x_continuous(breaks = seq_len(nrow(plot_data)),
+                            labels = rev(plot_data$HomeLabel),
+                            sec.axis = sec_axis(~.,
+                                                breaks = seq_len(nrow(plot_data)),
+                                                labels = rev(plot_data$AwayLabel)),
+                            expand = c(0,0.6)) +
+        scale_colour_manual(values = colour) +
+        ylim(-max(abs(plot_data$Predicted) + 2, abs(plot_data$Margin) + 2),
+              max(abs(plot_data$Predicted) + 2, abs(plot_data$Margin) + 2)) +
+        coord_flip() +
+        labs(title = (paste("Results -", round)),
+             subtitle = "Difference between estimated and actual margins",
+             y = paste("Season accuracy", paste0(round(accuracy), "%"),
+                       paste0("(", correct, "/", nrow(season), "),"),
+                       "Margin MAE", round(mae, 2), "pts")) +
+        theme_minimal() +
+        theme(legend.position = "none",
+              plot.title = element_text(size = 24, face = "bold", hjust = 0.5),
+              plot.subtitle = element_text(size = 18, hjust = 0.5),
+              axis.title.y = element_blank(),
+              axis.text.x = element_blank(),
+              axis.text.y = element_text(size = 14, face = "bold",
+                                         colour = labels),
+              axis.text.y.right = element_text(colour = labels_right),
+              panel.grid = element_blank())
+}
+
+
 plot_ladder <- function(sim_summ, round, palettes) {
     plot_data <- sim_summ %>%
         select(Team, starts_with("Ladder")) %>%
