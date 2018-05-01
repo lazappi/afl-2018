@@ -2,7 +2,7 @@ plot_predictions <- function(predictions, round, palettes) {
     plot_data <- predictions %>%
         mutate(Positive = Margin >= 0) %>%
         mutate(Winner = if_else(Positive, Home, Away)) %>%
-        mutate(Offset = -sign(Margin) * 1.7) %>%
+        mutate(Offset = -sign(Margin) * max(abs(Margin)) * 0.08) %>%
         mutate(HomePct = round(Result * 100),
                AwayPct = 100 - HomePct) %>%
         mutate(HomeLabel = paste0(Home, " ", HomePct, "%"),
@@ -66,7 +66,9 @@ plot_results <- function(model, palettes) {
         mutate(Positive = Margin >= Predicted) %>%
         mutate(PredWinner = if_else(Predicted > 0, HomeTeam, AwayTeam)) %>%
         mutate(RealWinner = if_else(Margin > 0, HomeTeam, AwayTeam)) %>%
-        mutate(Offset = if_else(Positive, 2, -2)) %>%
+        mutate(MaxValue = max(abs(c(Margin, Predicted)))) %>%
+        mutate(Offset = if_else(Positive, MaxValue * 0.06,
+                                -MaxValue * 0.06)) %>%
         mutate(HomeLabel = HomeTeam,
                AwayLabel = AwayTeam) %>%
         mutate(Game = n():1)
@@ -87,14 +89,13 @@ plot_results <- function(model, palettes) {
         geom_text(aes(y = -(Margin + Offset),  label = abs(round(Margin))),
                   colour = text_real, size = 6) +
         scale_x_continuous(breaks = seq_len(nrow(plot_data)),
-                            labels = rev(plot_data$HomeLabel),
-                            sec.axis = sec_axis(~.,
-                                                breaks = seq_len(nrow(plot_data)),
-                                                labels = rev(plot_data$AwayLabel)),
-                            expand = c(0,0.6)) +
+                           labels = rev(plot_data$HomeLabel),
+                           sec.axis = sec_axis(~.,
+                                               breaks = seq_len(nrow(plot_data)),
+                                               labels = rev(plot_data$AwayLabel)),
+                            expand = c(0, 0.6)) +
         scale_colour_manual(values = colour) +
-        ylim(-max(abs(plot_data$Predicted) + 2, abs(plot_data$Margin) + 2),
-              max(abs(plot_data$Predicted) + 2, abs(plot_data$Margin) + 2)) +
+        ylim(-plot_data$MaxValue[1] * 1.1, plot_data$MaxValue[1] * 1.1) +
         coord_flip() +
         labs(title = (paste("Results -", round)),
              subtitle = "Difference between estimated and actual margins",
@@ -203,7 +204,7 @@ plot_history <- function(model, round, palettes) {
         scale_x_continuous(breaks = seq(5, 23, 5), limits = c(0, 23)) +
         scale_colour_manual(values = palettes$on_white) +
         labs(title = paste("Ratings history"),
-             subtitle = paste("Ratings for teams to the end of", round),
+             subtitle = paste("Ratings for teams to the start of", round),
              x = "Round",
              y = "Rating") +
         theme_minimal() +
