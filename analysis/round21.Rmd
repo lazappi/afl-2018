@@ -1,0 +1,193 @@
+---
+title: "Round 21"
+author: "Luke Zappia"
+date: '`r Sys.Date()`'
+output:
+  html_document:
+    number_sections: yes
+    theme: yeti
+    toc: yes
+    toc_float: yes
+    df_print: paged
+editor_options: 
+  chunk_output_type: console
+---
+
+Code version: `r system("git log -1 --format=oneline | cut -d' ' -f1", intern = TRUE)`
+
+```{r knitr, include = FALSE}
+DOCNAME = "round21"
+knitr::opts_chunk$set(autodep        = TRUE,
+                      cache          = TRUE,
+                      cache.path     = paste0("cache/", DOCNAME, "/"),
+                      cache.comments = TRUE,
+                      echo           = FALSE,
+                      error          = FALSE,
+                      fig.align      = "center",
+                      fig.path       = paste0("figures/", DOCNAME, "/"),
+                      fig.width      = 10,
+                      fig.height     = 8,
+                      message        = FALSE,
+                      warning        = FALSE)
+```
+
+```{r libaries, cache = FALSE}
+library("aflelo")
+library("here")
+library("formattable")
+library("viridis")
+library("tidyverse")
+```
+
+```{r source, cache = FALSE}
+source(here("R/palettes.R"))
+source(here("R/plotting.R"))
+source(here("R/summarise.R"))
+source(here("R/tables.R"))
+```
+
+```{r setup}
+round <- "R21"
+dir.create(here("output", round), showWarnings = FALSE)
+```
+
+Introduction
+============
+
+This document shows predictions and simulations for `r round`. 
+
+```{r load}
+source(here("R/get_matches.R"))
+
+model <- read_rds(here("output/model_preseason.Rds"))
+matches <- read_tsv(here("data/matches_2018.tsv"),
+                    col_types = cols(
+                        .default = col_character(),
+                        Date = col_date(format = ""),
+                        Season = col_integer(),
+                        HomeGoals = col_integer(),
+                        HomeBehinds = col_integer(),
+                        HomeTotal = col_integer(),
+                        AwayGoals = col_integer(),
+                        AwayBehinds = col_integer(),
+                        AwayTotal = col_integer()
+                    ))
+fixture <- read_tsv(here("data/fixture_2018.tsv"),
+                    col_types = cols(
+                        .default = col_character(),
+                        Date = col_date(format = ""),
+                        Season = col_integer()
+                    ))
+
+fixture_round <- fixture %>%
+    filter(Round == round)
+
+round_num <- as.numeric(str_remove(round, "R"))
+upcoming_rounds <- paste0("R", seq(round_num, 23))
+
+fixture_upcoming <- fixture %>%
+    filter(Round %in% upcoming_rounds)
+
+matches <- matches %>%
+    filter(!(Round %in% c(upcoming_rounds, round)))
+```
+
+```{r train}
+model <- train_model(model, matches)
+```
+
+```{r simulate, results = "hide"}
+message("Starting simulations at: ", Sys.time())
+sim <- simulate_matches(model, fixture_upcoming, n = 20000,
+                        n_cores = 5, seed = 1)
+message("Finished at: ", Sys.time())
+sim_summ <- summarise_sim(sim)
+```
+
+Summary
+=======
+
+```{r summary-table}
+summ_table <- make_summ_table(sim_summ, model)
+summ_table
+```
+
+Last round
+==========
+
+```{r results}
+res_plot <- plot_results(model, palettes)
+res_plot
+```
+
+Predictions
+===========
+
+```{r predict}
+predictions <- pmap(fixture_round, function(HomeTeam, AwayTeam, Ground, ...) {
+    pred <- predict_match(model, HomeTeam, AwayTeam, Ground)
+    data_frame(Home = HomeTeam, Away = AwayTeam, Ground = Ground,
+               Result = pred[1], Margin = pred[2])
+})
+
+predictions <- bind_rows(predictions)
+```
+
+```{r plot-predictions}
+pred_plot <- plot_predictions(predictions, round, palettes)
+pred_plot
+```
+
+Projections
+===========
+
+```{r plot-ladder}
+ladder_plot <- plot_ladder(sim_summ, round, palettes)
+ladder_plot
+```
+
+```{r plot-points}
+points_plot <- plot_points(sim_summ, round, palettes)
+points_plot
+```
+
+History
+=======
+
+```{r plot-history}
+history_plot <- plot_history(model, round, palettes)
+history_plot
+```
+
+```{r save, cache = FALSE}
+write_tsv(predictions, here("output", round, "predictions.tsv"))
+write_rds(sim, here("output", round, "simulation.Rds"))
+write_rds(summ_table, here("output", round, "summary_table.Rds"))
+ggsave(here("output", round, "last_round.png"), res_plot,
+       width = 10, height = 5)
+ggsave(here("output", round, "predictions.png"), pred_plot,
+       width = 10, height = 5)
+ggsave(here("output", round, "ladder.png"), ladder_plot,
+       width = 10, height = 10)
+ggsave(here("output", round, "points.png"), points_plot,
+       width = 10, height = 10)
+ggsave(here("output", round, "history.png"), history_plot,
+       width = 10, height = 12)
+```
+
+Session info
+============
+
+```{r session-info, cache = FALSE}
+devtools::session_info()
+```
+
+```{r cleanup-docs, cache = FALSE}
+doc.files <- c(list.files(pattern = "pdf"),
+               list.files(pattern = "html"),
+               list.files(pattern = "docx"))
+
+for (file in doc.files) {
+    file.rename(file, file.path("../docs", file))
+}
+```
